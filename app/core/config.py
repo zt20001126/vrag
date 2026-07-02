@@ -14,10 +14,13 @@ class Settings:
     API_VERSION: str = os.getenv("API_VERSION", "0.1.0")
     API_PREFIX: str = os.getenv("API_PREFIX", "/api/v1")
     UPLOAD_DIR: Path = Path(os.getenv("UPLOAD_DIR", "data/uploads"))
+    GENERATED_DIR: Path = Path(os.getenv("GENERATED_DIR", "app/static/generated"))
+    GENERATED_ROUTE_PREFIX: str = os.getenv("GENERATED_ROUTE_PREFIX", "/static/generated")
+    TOP_K: int = int(os.getenv("TOP_K", "5"))
 
     DATABASE_URL: str = os.getenv(
         "DATABASE_URL",
-        "postgresql+psycopg://vision_rag:vision_rag_password@localhost:5432/vision_rag",
+        "postgresql+psycopg://vision_rag:vision_rag_password@127.0.0.1:5433/vision_rag",
     )
 
     DEEPSEEK_API_KEY: Optional[str] = os.getenv("DEEPSEEK_API_KEY")
@@ -35,9 +38,15 @@ class Settings:
     ALIYUN_EMBEDDING_MODEL: str = os.getenv("ALIYUN_EMBEDDING_MODEL", "qwen3-vl-embedding")
     ALIYUN_EMBEDDING_DIMENSION: int = int(os.getenv("ALIYUN_EMBEDDING_DIMENSION", "512"))
     ALIYUN_IMAGE_GENERATION_URL: Optional[str] = os.getenv("ALIYUN_IMAGE_GENERATION_URL")
+    ALIYUN_IMAGE_TASK_URL_PREFIX: str = os.getenv(
+        "ALIYUN_IMAGE_TASK_URL_PREFIX",
+        "https://dashscope.aliyuncs.com/api/v1/tasks",
+    )
     ALIYUN_IMAGE_MODEL: str = os.getenv("ALIYUN_IMAGE_MODEL", "wanx2.1-t2i-turbo")
 
     REQUEST_TIMEOUT_SECONDS: int = int(os.getenv("REQUEST_TIMEOUT_SECONDS", "30"))
+    IMAGE_TASK_POLL_INTERVAL_SECONDS: float = float(os.getenv("IMAGE_TASK_POLL_INTERVAL_SECONDS", "2"))
+    IMAGE_TASK_MAX_WAIT_SECONDS: int = int(os.getenv("IMAGE_TASK_MAX_WAIT_SECONDS", "90"))
 
 
 settings = Settings()

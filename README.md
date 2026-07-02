@@ -57,6 +57,37 @@ http://127.0.0.1:8000/
 - `POST /api/v1/generate`
 - `GET /test/llm`
 - `GET /test/image`
+- `GET /test/image-embedding`
+
+## Vision RAG 主流程
+
+当前后端已经接入最小闭环：
+
+1. `POST /api/v1/upload`
+   - 接收 `designer_id` 和图片文件
+   - 保存图片到 `data/uploads`
+   - 调用阿里云百炼多模态 embedding
+   - 写入 PostgreSQL `images` 表的 `embedding vector(512)`
+
+2. `POST /api/v1/search`
+   - 接收 `designer_id`、`query`、`top_k`
+   - 将文本 query 转为 512 维 embedding
+   - 使用 pgvector 按 `designer_id` 过滤并做 cosine 相似度检索
+
+3. `POST /api/v1/generate`
+   - 接收 `designer_id`、`prompt`、`top_k`
+   - 检索该设计师下的相似参考图
+   - 使用 DeepSeek 优化 prompt
+   - 调用阿里云百炼图像生成异步接口
+   - 轮询生成任务
+   - 下载生成图片并保存到 `app/static/generated`
+   - 返回本地可访问 URL
+
+运行完整流程前，请先启动 PostgreSQL + pgvector：
+
+```powershell
+docker compose up -d
+```
 
 ## API Key 配置
 
@@ -128,7 +159,7 @@ docker-compose down -v
 
 ```text
 Host: 127.0.0.1
-Port: 5432
+Port: 5433
 Database: vision_rag
 User: vision_rag
 Password: vision_rag_password
@@ -143,7 +174,7 @@ docker exec -it vision-rag-postgres psql -U vision_rag -d vision_rag
 也可以使用本机 psql：
 
 ```powershell
-psql "postgresql://vision_rag:vision_rag_password@127.0.0.1:5432/vision_rag"
+psql "postgresql://vision_rag:vision_rag_password@127.0.0.1:5433/vision_rag"
 ```
 
 ## 验证 pgvector

@@ -20,6 +20,28 @@ class LlmService:
             user_prompt=f"Optimize this prompt for high-quality visual generation: {prompt}",
         )
 
+    def optimize_prompt_with_references(
+        self,
+        prompt: str,
+        reference_images: list[dict[str, object]],
+    ) -> dict[str, object]:
+        references = "\n".join(
+            f"- image_url={item.get('image_url')}, score={item.get('score')}, distance={item.get('distance')}"
+            for item in reference_images
+        )
+        return self._chat(
+            system_prompt=(
+                "You are a senior visual prompt engineer. "
+                "Rewrite the user's prompt for an image generation model. "
+                "Use the retrieved reference images as style context, but do not mention internal IDs."
+            ),
+            user_prompt=(
+                f"User prompt: {prompt}\n\n"
+                f"Retrieved style references:\n{references or 'No references found.'}\n\n"
+                "Return one concise generation prompt in English."
+            ),
+        )
+
     def _chat(self, system_prompt: str, user_prompt: str) -> dict[str, object]:
         if not _is_configured(settings.DEEPSEEK_API_KEY):
             return {

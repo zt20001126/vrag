@@ -14,3 +14,7 @@ venv/
 # Uploaded local files
 data/uploads/*
 !data/uploads/.gitkeep
+
+# Generated images
+app/static/generated/*
+!app/static/generated/.gitkeep

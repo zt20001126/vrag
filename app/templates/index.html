@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -11,8 +11,8 @@
       <section class="hero">
         <div>
           <p class="eyebrow">Visual RAG Workspace</p>
-          <h1>设计师风格检索与图像生成</h1>
-          <p class="subtitle">上传参考图，输入风格需求，先跑通视觉 RAG 的核心交互链路。</p>
+          <h1>Designer Style Retrieval and Image Generation</h1>
+          <p class="subtitle">Upload reference images, retrieve by designer style, optimize prompts, and generate images through the Vision RAG flow.</p>
         </div>
         <div class="status-pill" id="healthStatus">Checking</div>
       </section>
@@ -22,23 +22,25 @@
           <div class="panel-heading">
             <span class="step">01</span>
             <div>
-              <h2>图片上传</h2>
-              <p>保存图片并返回后端文件路径。</p>
+              <h2>Upload</h2>
+              <p>Save a designer reference image, embed it, and store it in pgvector.</p>
             </div>
           </div>
+
+          <input id="uploadDesignerInput" type="number" min="1" value="1" placeholder="Designer ID" />
 
           <label class="dropzone" for="imageInput">
             <input id="imageInput" type="file" accept="image/*" />
             <span class="drop-icon">+</span>
-            <span class="drop-title">选择一张设计参考图</span>
+            <span class="drop-title">Choose a reference image</span>
             <span class="drop-meta">PNG / JPG / WEBP</span>
           </label>
 
           <div class="preview" id="previewBox">
-            <span>预览区域</span>
+            <span>Preview</span>
           </div>
 
-          <button class="primary-btn" id="uploadBtn" type="button">上传图片</button>
+          <button class="primary-btn" id="uploadBtn" type="button">Upload and Embed</button>
           <pre class="result-box" id="uploadResult">{}</pre>
         </aside>
 
@@ -46,22 +48,22 @@
           <div class="panel-heading">
             <span class="step">02</span>
             <div>
-              <h2>RAG 对话检索</h2>
-              <p>用自然语言描述你想找的设计风格。</p>
+              <h2>RAG Search</h2>
+              <p>Search similar reference images filtered by designer ID.</p>
             </div>
           </div>
 
           <div class="chat-window" id="chatWindow">
             <div class="message assistant">
               <strong>Vision RAG</strong>
-              <span>可以输入“极简海报、黑白排版、工业设计风格”等查询词，我会返回 mock 检索结果。</span>
+              <span>Upload at least one reference image for a designer, then search prompts such as "minimal product poster" or "editorial furniture layout".</span>
             </div>
           </div>
 
           <form class="chat-form" id="searchForm">
-            <input id="queryInput" type="text" placeholder="输入检索需求，例如：极简产品海报" required />
-            <input id="designerInput" type="text" placeholder="设计师 ID，可选" />
-            <button type="submit">检索</button>
+            <input id="queryInput" type="text" placeholder="Search prompt" required />
+            <input id="designerInput" type="number" min="1" value="1" placeholder="Designer ID" required />
+            <button type="submit">Search</button>
           </form>
         </section>
 
@@ -69,20 +71,20 @@
           <div class="panel-heading">
             <span class="step">03</span>
             <div>
-              <h2>图像生成</h2>
-              <p>当前返回 mock 生成结果。</p>
+              <h2>Generate</h2>
+              <p>Retrieve style references, optimize the prompt, generate an image, and save it locally.</p>
             </div>
           </div>
 
           <form class="generate-form" id="generateForm">
-            <textarea id="promptInput" rows="6" placeholder="输入生成提示词，例如：A minimal furniture poster with soft shadows" required></textarea>
-            <input id="generateDesignerInput" type="text" placeholder="设计师 ID，可选" />
-            <button class="primary-btn" type="submit">生成图片</button>
+            <input id="generateDesignerInput" type="number" min="1" value="1" placeholder="Designer ID" required />
+            <textarea id="promptInput" rows="6" placeholder="A minimal product poster with soft studio lighting" required></textarea>
+            <button class="primary-btn" type="submit">Generate Image</button>
           </form>
 
           <div class="generated-card" id="generatedCard">
-            <div class="generated-placeholder">Mock Image</div>
-            <p id="generatedText">等待生成请求</p>
+            <div class="generated-placeholder" id="generatedPreview">Generated Image</div>
+            <p id="generatedText">Waiting for generation request</p>
           </div>
         </aside>
       </section>

@@ -1,26 +1,20 @@
+from app.services.embedding_service import embedding_service
+from app.vector.client import pgvector_client
+
+
 class RagService:
     def search_similar_images(
         self,
         query: str,
-        designer_id: str | None = None,
+        designer_id: int,
         top_k: int = 5,
     ) -> list[dict[str, object]]:
-        # TODO: Embed query and retrieve similar images from pgvector.
-        mock_results = [
-            {
-                "image_url": "/data/uploads/mock-image-001.png",
-                "designer_id": designer_id or "mock-designer",
-                "score": 0.98,
-                "metadata": {"style": "minimal", "source": "mock"},
-            },
-            {
-                "image_url": "/data/uploads/mock-image-002.png",
-                "designer_id": designer_id or "mock-designer",
-                "score": 0.93,
-                "metadata": {"style": "editorial", "source": "mock"},
-            },
-        ]
-        return mock_results[:top_k]
+        query_embedding = embedding_service.embed_text(query)
+        return pgvector_client.search(
+            embedding=query_embedding,
+            designer_id=designer_id,
+            top_k=top_k,
+        )
 
 
 rag_service = RagService()
