@@ -31,14 +31,17 @@ class ImageService:
                 "message": "ALIYUN_API_KEY configured. Set ALIYUN_IMAGE_GENERATION_URL to enable real call.",
             }
 
-        # TODO: Adjust payload according to the selected Alibaba Cloud Bailian image generation API.
         try:
+            headers = {
+                "Authorization": f"Bearer {settings.ALIYUN_API_KEY}",
+                "Content-Type": "application/json",
+            }
+            if "text2image/image-synthesis" in settings.ALIYUN_IMAGE_GENERATION_URL:
+                headers["X-DashScope-Async"] = "enable"
+
             response = requests.post(
                 settings.ALIYUN_IMAGE_GENERATION_URL,
-                headers={
-                    "Authorization": f"Bearer {settings.ALIYUN_API_KEY}",
-                    "Content-Type": "application/json",
-                },
+                headers=headers,
                 json={
                     "model": settings.ALIYUN_IMAGE_MODEL,
                     "input": {"prompt": prompt},
@@ -55,9 +58,43 @@ class ImageService:
                 "message": f"Alibaba Cloud Bailian request failed: {exc}",
             }
 
-    def embed_image(self, image_path: str) -> list[float] | None:
-        # TODO: Integrate Alibaba Cloud Bailian image embedding API.
-        return None
+    def embed_image(self, image_url: str) -> dict[str, object]:
+        if not _is_configured(settings.ALIYUN_API_KEY):
+            return {
+                "provider": "aliyun-bailian",
+                "configured": False,
+                "message": "ALIYUN_API_KEY is not configured.",
+            }
+
+        try:
+            response = requests.post(
+                settings.ALIYUN_EMBEDDING_API_URL,
+                headers={
+                    "Authorization": f"Bearer {settings.ALIYUN_API_KEY}",
+                    "Content-Type": "application/json",
+                },
+                json={
+                    "model": settings.ALIYUN_EMBEDDING_MODEL,
+                    "input": {
+                        "contents": [
+                            {"image": image_url},
+                        ],
+                    },
+                    "parameters": {
+                        "dimension": settings.ALIYUN_EMBEDDING_DIMENSION,
+                    },
+                },
+                timeout=settings.REQUEST_TIMEOUT_SECONDS,
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException as exc:
+            return {
+                "provider": "aliyun-bailian",
+                "configured": True,
+                "success": False,
+                "message": f"Alibaba Cloud Bailian embedding request failed: {exc}",
+            }
 
 
 image_service = ImageService()

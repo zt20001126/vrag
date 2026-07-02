@@ -28,6 +28,12 @@ class Settings:
     DEEPSEEK_MODEL: str = os.getenv("DEEPSEEK_MODEL", "deepseek-chat")
 
     ALIYUN_API_KEY: Optional[str] = os.getenv("ALIYUN_API_KEY")
+    ALIYUN_EMBEDDING_API_URL: str = os.getenv(
+        "ALIYUN_EMBEDDING_API_URL",
+        "https://dashscope.aliyuncs.com/api/v1/services/embeddings/multimodal-embedding/multimodal-embedding",
+    )
+    ALIYUN_EMBEDDING_MODEL: str = os.getenv("ALIYUN_EMBEDDING_MODEL", "qwen3-vl-embedding")
+    ALIYUN_EMBEDDING_DIMENSION: int = int(os.getenv("ALIYUN_EMBEDDING_DIMENSION", "512"))
     ALIYUN_IMAGE_GENERATION_URL: Optional[str] = os.getenv("ALIYUN_IMAGE_GENERATION_URL")
     ALIYUN_IMAGE_MODEL: str = os.getenv("ALIYUN_IMAGE_MODEL", "wanx2.1-t2i-turbo")
 

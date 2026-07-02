@@ -43,3 +43,17 @@ async def test_llm(text: str = "生成一张极简产品海报") -> dict[str, ob
 @app.get("/test/image", tags=["test"])
 async def test_image(prompt: str = "A minimal product poster with soft studio lighting") -> dict[str, object]:
     return image_service.generate_image(prompt)
+
+
+@app.get("/test/image-embedding", tags=["test"])
+async def test_image_embedding(
+    image_url: str = "https://dashscope.oss-cn-beijing.aliyuncs.com/images/256_1.png",
+) -> dict[str, object]:
+    result = image_service.embed_image(image_url)
+    embeddings = result.get("output", {}).get("embeddings", [])
+    if embeddings and isinstance(embeddings, list):
+        first_embedding = embeddings[0].get("embedding", [])
+        result["embedding_dimension"] = len(first_embedding)
+        result["embedding_preview"] = first_embedding[:5]
+        embeddings[0]["embedding"] = "[hidden]"
+    return result
