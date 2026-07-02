@@ -1,6 +1,8 @@
 from fastapi import APIRouter
 from pydantic import BaseModel, Field
 
+from app.services.image_service import image_service
+
 
 router = APIRouter()
 
@@ -11,11 +13,7 @@ class GenerateRequest(BaseModel):
 
 
 @router.post("/generate")
-async def generate_image(request: GenerateRequest) -> dict[str, str | None]:
-    # TODO: Replace with Stable Diffusion or another image generation backend.
-    return {
-        "message": "mock image generated",
-        "prompt": request.prompt,
-        "designer_id": request.designer_id,
-        "image_url": "/static/mock-generated-image.png",
-    }
+async def generate_image(request: GenerateRequest) -> dict[str, object]:
+    result = image_service.generate_image(request.prompt)
+    result["designer_id"] = request.designer_id
+    return result

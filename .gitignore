@@ -1,0 +1,16 @@
+# Local environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+.venv/
+venv/
+
+# Uploaded local files
+data/uploads/*
+!data/uploads/.gitkeep

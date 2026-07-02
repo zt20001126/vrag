@@ -55,6 +55,45 @@ http://127.0.0.1:8000/
 - `POST /api/v1/upload`
 - `POST /api/v1/search`
 - `POST /api/v1/generate`
+- `GET /test/llm`
+- `GET /test/image`
+
+## API Key 配置
+
+项目通过 `.env` 管理外部服务 API Key，代码中不写死密钥。
+
+```env
+DEEPSEEK_API_KEY=your_deepseek_api_key_here
+ALIYUN_API_KEY=your_aliyun_api_key_here
+DATABASE_URL=postgresql+psycopg://vision_rag:vision_rag_password@localhost:5432/vision_rag
+```
+
+配置读取入口：
+
+```text
+app/core/config.py
+```
+
+服务封装入口：
+
+```text
+app/services/llm_service.py
+app/services/image_service.py
+```
+
+测试 DeepSeek 配置：
+
+```text
+http://127.0.0.1:8000/test/llm
+```
+
+测试阿里云百炼配置：
+
+```text
+http://127.0.0.1:8000/test/image
+```
+
+`.env` 中仍是 `your_xxx_here` 占位值时，接口会返回 `configured: false`。替换为真实 Key 后，DeepSeek 测试接口会发起真实请求；阿里云图像生成如果未配置 `ALIYUN_IMAGE_GENERATION_URL`，会返回 mock 结果并提示如何开启真实调用。
 
 ## 启动数据库
 

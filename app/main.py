@@ -6,6 +6,8 @@ from fastapi.staticfiles import StaticFiles
 
 from app.api import generate, search, upload
 from app.core.config import settings
+from app.services.image_service import image_service
+from app.services.llm_service import llm_service
 
 BASE_DIR = Path(__file__).resolve().parent
 
@@ -31,3 +33,13 @@ async def index() -> FileResponse:
 @app.get("/health", tags=["health"])
 async def health_check() -> dict[str, str]:
     return {"status": "ok", "service": settings.PROJECT_NAME}
+
+
+@app.get("/test/llm", tags=["test"])
+async def test_llm(text: str = "生成一张极简产品海报") -> dict[str, object]:
+    return llm_service.generate_prompt(text)
+
+
+@app.get("/test/image", tags=["test"])
+async def test_image(prompt: str = "A minimal product poster with soft studio lighting") -> dict[str, object]:
+    return image_service.generate_image(prompt)
